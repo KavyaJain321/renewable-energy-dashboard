@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { SidebarProvider } from "./components/ui/sidebar";
 import { SidebarNav } from "./components/sidebar-nav";
 import { TopNav } from "./components/top-nav";
@@ -13,6 +13,7 @@ import { SettingsPage } from "./components/settings-page";
 import { LoginScreen } from "./components/login-screen";
 import { SignupScreen } from "./components/signup-screen";
 import { MapSelectionScreen } from "./components/map-selection-screen";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import {
   Card,
   CardContent,
@@ -83,6 +84,10 @@ export default function App() {
     setCurrentScreen("login");
   };
 
+  const handleUnauthorized = () => {
+    setCurrentScreen("login");
+  };
+
   // Render login/signup screens
   if (currentScreen === "login") {
     return (
@@ -105,9 +110,11 @@ export default function App() {
   // Render map selection screen
   if (currentScreen === "mapSelection") {
     return (
-      <MapSelectionScreen
-        onConfirmSelection={handleMapSelectionConfirm}
-      />
+      <ProtectedRoute onUnauthorized={handleUnauthorized}>
+        <MapSelectionScreen
+          onConfirmSelection={handleMapSelectionConfirm}
+        />
+      </ProtectedRoute>
     );
   }
 
@@ -136,17 +143,19 @@ export default function App() {
   };
 
   return (
-    <SidebarProvider>
-      <div className="flex h-screen bg-white">
-        <SidebarNav
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-        <div className="flex-1 flex flex-col">
-          <TopNav />
-          {renderContent()}
+    <ProtectedRoute onUnauthorized={handleUnauthorized}>
+      <SidebarProvider>
+        <div className="flex h-screen bg-white">
+          <SidebarNav
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
+          <div className="flex-1 flex flex-col">
+            <TopNav />
+            {renderContent()}
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </ProtectedRoute>
   );
 }
