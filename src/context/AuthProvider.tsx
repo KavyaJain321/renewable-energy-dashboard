@@ -29,13 +29,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         if (error) {
-          console.error('Error getting session:', error)
+          console.warn('Supabase session error (expected with placeholder credentials):', error.message)
         } else {
           setSession(session)
           setUser(session?.user ?? null)
         }
       } catch (err) {
-        console.error('Error getting initial session:', err)
+        console.warn('Supabase connection error (expected with placeholder credentials):', err)
       } finally {
         setLoading(false)
       }
@@ -53,7 +53,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         // Create user profile on sign up
         if (event === 'SIGNED_UP' && session?.user) {
-          await createUserProfile(session.user)
+          try {
+            await createUserProfile(session.user)
+          } catch (err) {
+            console.warn('Error creating user profile (expected with placeholder credentials):', err)
+          }
         }
       }
     )
