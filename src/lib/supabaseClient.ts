@@ -12,12 +12,9 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 // Check if we have real Supabase credentials
 const hasRealCredentials = supabaseUrl && supabaseAnonKey && 
-  !supabaseUrl.includes('your-project-id') && 
-  !supabaseUrl.includes('fake-url-for-testing') &&
-  !supabaseAnonKey.includes('placeholder') &&
-  !supabaseAnonKey.includes('fake-key-for-testing') &&
   supabaseUrl.includes('.supabase.co') &&
-  supabaseAnonKey.startsWith('eyJ')
+  supabaseAnonKey.startsWith('eyJ') &&
+  supabaseAnonKey.length > 100 // Real JWT tokens are much longer
 
 if (!hasRealCredentials) {
   // Only show warning once to reduce console noise
@@ -25,6 +22,8 @@ if (!hasRealCredentials) {
     console.warn('⚠️ Using mock Supabase client. Authentication will not work until you set up real Supabase credentials.')
     window.mockSupabaseWarningShown = true
   }
+} else {
+  console.log('✅ Real Supabase credentials detected. Authentication is enabled.')
 }
 
 // For development/testing, use a mock client if env vars are missing or placeholder

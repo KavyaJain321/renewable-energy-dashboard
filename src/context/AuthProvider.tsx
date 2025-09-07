@@ -132,6 +132,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginWithGoogle = async () => {
     try {
+      console.log('AuthProvider: loginWithGoogle called');
       setLoading(true)
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -140,6 +141,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         },
       })
 
+      console.log('AuthProvider: OAuth response', { data, error });
+
       if (error) {
         setLoading(false)
         return { error }
@@ -147,6 +150,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       return { error: null }
     } catch (err) {
+      console.log('AuthProvider: OAuth exception', err);
       setLoading(false)
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       return { error: { message: errorMessage } as AuthError }
