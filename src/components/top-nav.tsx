@@ -1,10 +1,16 @@
-import { Search, Bell, ChevronDown } from "lucide-react";
+import { Search, Bell, ChevronDown, LogOut } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
+import { useAuth } from "../context/AuthProvider";
 
-export function TopNav() {
+interface TopNavProps {
+  onLogout?: () => void;
+}
+
+export function TopNav({ onLogout }: TopNavProps) {
+  const { user } = useAuth();
   return (
     <header className="h-16 border-b bg-white flex items-center justify-between px-6">
       <div className="flex items-center gap-4 flex-1 max-w-md">
@@ -27,14 +33,28 @@ export function TopNav() {
         
         <div className="flex items-center gap-2 ml-4">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="User" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarImage src={user?.user_metadata?.avatar_url} alt="User" />
+            <AvatarFallback>
+              {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
+            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col text-sm">
-            <span className="font-medium">John Doe</span>
+            <span className="font-medium">
+              {user?.user_metadata?.full_name || user?.email || 'User'}
+            </span>
             <span className="text-xs text-gray-500">Energy Analyst</span>
           </div>
-          <ChevronDown className="h-4 w-4 text-gray-400" />
+          {onLogout && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onLogout}
+              className="ml-2"
+              title="Logout"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     </header>

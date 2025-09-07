@@ -58,7 +58,7 @@ function PlaceholderPage({
 }
 
 export default function App() {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [currentScreen, setCurrentScreen] = useState<
     "login" | "signup" | "mapSelection" | "dashboard"
   >("login");
@@ -67,8 +67,16 @@ export default function App() {
   // Handle authentication state changes
   useEffect(() => {
     if (user && !loading) {
-      // User is authenticated, redirect to map selection or dashboard
-      setCurrentScreen("mapSelection");
+      // Check if user has already completed map selection
+      const hasCompletedMapSelection = localStorage.getItem(`mapSelectionCompleted_${user.id}`);
+      
+      if (hasCompletedMapSelection) {
+        // User has completed map selection, go to dashboard
+        setCurrentScreen("dashboard");
+      } else {
+        // User is authenticated but hasn't completed map selection
+        setCurrentScreen("mapSelection");
+      }
     } else if (!user && !loading) {
       // User is not authenticated, show login
       setCurrentScreen("login");
@@ -84,6 +92,10 @@ export default function App() {
   };
 
   const handleMapSelectionConfirm = () => {
+    // Mark map selection as completed for this user
+    if (user) {
+      localStorage.setItem(`mapSelectionCompleted_${user.id}`, 'true');
+    }
     setCurrentScreen("dashboard");
     setActiveTab("dashboard"); // Start with dashboard after map selection
   };
@@ -94,6 +106,19 @@ export default function App() {
 
   const switchToLogin = () => {
     setCurrentScreen("login");
+  };
+
+  const resetMapSelection = () => {
+    // Clear map selection status and go back to map selection
+    if (user) {
+      localStorage.removeItem(`mapSelectionCompleted_${user.id}`);
+    }
+    setCurrentScreen("mapSelection");
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    // The useEffect will handle redirecting to login
   };
 
   // Show loading spinner while checking authentication
@@ -140,7 +165,7 @@ export default function App() {
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <DashboardMain />;
+        return <DashboardMain onResetMapSelection={resetMapSelection} />;
       case "constraints":
         return <ConstraintAnalysis />;
       case "energy":
@@ -168,7 +193,7 @@ export default function App() {
           onTabChange={setActiveTab}
         />
         <div className="flex-1 flex flex-col">
-          <TopNav />
+          <TopNav onLogout={handleLogout} />
           {renderContent()}
         </div>
       </div>

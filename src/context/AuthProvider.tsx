@@ -121,6 +121,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { error }
       }
 
+      // Clear user data from localStorage
+      if (user) {
+        localStorage.removeItem(`mapSelectionCompleted_${user.id}`);
+      }
+
       return { error: null }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
