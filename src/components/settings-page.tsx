@@ -22,7 +22,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-export function SettingsPage() {
+interface SettingsPageProps {
+  onLogout?: () => void;
+}
+
+export function SettingsPage({ onLogout }: SettingsPageProps) {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [dataRetentionEnabled, setDataRetentionEnabled] = useState(false);
   const [anonymizationEnabled, setAnonymizationEnabled] = useState(true);
@@ -306,6 +310,35 @@ export function SettingsPage() {
                     <label htmlFor="billing" className="text-sm">Billing reminders</label>
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Account Actions */}
+        <div className="col-span-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Account Actions
+              </CardTitle>
+              <CardDescription>Manage your account session</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h4 className="font-medium text-blue-800 mb-2">Sign Out</h4>
+                <p className="text-sm text-blue-700 mb-3">
+                  Sign out of your account. You'll need to sign in again to access the application.
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={onLogout}
+                >
+                  <Lock className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
               </div>
             </CardContent>
           </Card>

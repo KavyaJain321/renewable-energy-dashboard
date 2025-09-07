@@ -6,7 +6,8 @@ import {
   DollarSign, 
   FileText, 
   Settings,
-  FolderOpen
+  FolderOpen,
+  LogOut
 } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 
@@ -23,9 +24,10 @@ const menuItems = [
 interface SidebarNavProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  onLogout?: () => void;
 }
 
-export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
+export function SidebarNav({ activeTab, onTabChange, onLogout }: SidebarNavProps) {
   return (
     <Sidebar className="border-r border-gray-200">
       <SidebarContent>
@@ -55,6 +57,23 @@ export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        
+        {/* Logout Section */}
+        {onLogout && (
+          <div className="mt-auto p-4 border-t border-gray-200">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={onLogout}
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </div>
+        )}
       </SidebarContent>
     </Sidebar>
   );

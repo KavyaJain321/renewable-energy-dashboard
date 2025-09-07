@@ -66,20 +66,22 @@ export default function App() {
 
   // Handle authentication state changes
   useEffect(() => {
-    if (user && !loading) {
-      // Check if user has already completed map selection
-      const hasCompletedMapSelection = localStorage.getItem(`mapSelectionCompleted_${user.id}`);
-      
-      if (hasCompletedMapSelection) {
-        // User has completed map selection, go to dashboard
-        setCurrentScreen("dashboard");
+    if (!loading) {
+      if (user) {
+        // Check if user has already completed map selection
+        const hasCompletedMapSelection = localStorage.getItem(`mapSelectionCompleted_${user.id}`);
+        
+        if (hasCompletedMapSelection) {
+          // User has completed map selection, go to dashboard
+          setCurrentScreen("dashboard");
+        } else {
+          // User is authenticated but hasn't completed map selection
+          setCurrentScreen("mapSelection");
+        }
       } else {
-        // User is authenticated but hasn't completed map selection
-        setCurrentScreen("mapSelection");
+        // User is not authenticated, show login
+        setCurrentScreen("login");
       }
-    } else if (!user && !loading) {
-      // User is not authenticated, show login
-      setCurrentScreen("login");
     }
   }, [user, loading]);
 
@@ -175,11 +177,11 @@ export default function App() {
       case "financials":
         return <Financials />;
       case "projects":
-        return <ProjectsPage />;
+        return <ProjectsPage onLogout={handleLogout} />;
       case "reports":
         return <ReportsPage />;
       case "settings":
-        return <SettingsPage />;
+        return <SettingsPage onLogout={handleLogout} />;
       default:
         return <DashboardMain />;
     }
@@ -191,6 +193,7 @@ export default function App() {
         <SidebarNav
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          onLogout={handleLogout}
         />
         <div className="flex-1 flex flex-col">
           <TopNav onLogout={handleLogout} />

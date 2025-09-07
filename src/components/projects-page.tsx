@@ -107,7 +107,11 @@ const getTypeIcon = (type: string) => {
   }
 };
 
-export function ProjectsPage() {
+interface ProjectsPageProps {
+  onLogout?: () => void;
+}
+
+export function ProjectsPage({ onLogout }: ProjectsPageProps) {
   return (
     <div className="flex-1 p-6 bg-gray-50">
       <div className="mb-6 flex items-center justify-between">
@@ -115,10 +119,22 @@ export function ProjectsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
           <p className="text-gray-600 mt-1">Manage your renewable energy assessment projects</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Project
-        </Button>
+        <div className="flex items-center gap-3">
+          {onLogout && (
+            <Button 
+              variant="outline" 
+              onClick={onLogout}
+              className="text-red-600 border-red-200 hover:bg-red-50"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          )}
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Project
+          </Button>
+        </div>
       </div>
 
       {/* Stats Overview */}
