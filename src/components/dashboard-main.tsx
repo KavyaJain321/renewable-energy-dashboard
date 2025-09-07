@@ -17,6 +17,12 @@ import {
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
+// TODO: Replace mock data with real Supabase queries
+// - Fetch constraint data from projects table
+// - Fetch energy output data from energy_potential field
+// - Fetch ROI data from financial_analysis field
+// - Use useProject hook to get current project data
+
 const constraintData = [
   { name: "Buildings", value: 15, color: "#ef4444" },
   { name: "Water Bodies", value: 12, color: "#3b82f6" },

@@ -14,6 +14,12 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
+// TODO: Replace mock projects data with real Supabase queries
+// - Use useProject hook to fetch user's projects
+// - Display real project data from projects table
+// - Add functionality to create new projects
+// - Add functionality to edit/delete existing projects
+
 const projects = [
   {
     id: 1,
