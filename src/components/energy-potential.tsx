@@ -32,7 +32,7 @@ const monthlyEnergyData = [
 const seasonalData = [
   { season: "Spring", solar: 750, wind: 417, efficiency: 82 },
   { season: "Summer", solar: 907, wind: 367, efficiency: 89 },
-  { season: "Fall", season: 593, wind: 483, efficiency: 75 },
+  { season: "Fall", solar: 593, wind: 483, efficiency: 75 },
   { season: "Winter", solar: 463, wind: 373, efficiency: 68 }
 ];
 
