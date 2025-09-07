@@ -1,5 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 
+// Type declaration for window object
+declare global {
+  interface Window {
+    mockSupabaseWarningShown?: boolean
+  }
+}
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
@@ -13,7 +20,11 @@ const hasRealCredentials = supabaseUrl && supabaseAnonKey &&
   supabaseAnonKey.startsWith('eyJ')
 
 if (!hasRealCredentials) {
-  console.warn('⚠️ Using mock Supabase client. Authentication will not work until you set up real Supabase credentials.')
+  // Only show warning once to reduce console noise
+  if (!window.mockSupabaseWarningShown) {
+    console.warn('⚠️ Using mock Supabase client. Authentication will not work until you set up real Supabase credentials.')
+    window.mockSupabaseWarningShown = true
+  }
 }
 
 // For development/testing, use a mock client if env vars are missing or placeholder
@@ -45,7 +56,6 @@ if (hasRealCredentials) {
       signOut: async () => ({ error: null }),
       signInWithOAuth: async () => {
         // Prevent any redirects or network requests
-        console.warn('Google OAuth not available. Please set up Supabase credentials.')
         return { 
           data: null, 
           error: { message: 'OAuth not available. Please set up Supabase credentials.' } 

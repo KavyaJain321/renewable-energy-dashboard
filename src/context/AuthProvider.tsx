@@ -141,15 +141,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       })
 
       if (error) {
+        setLoading(false)
         return { error }
       }
 
       return { error: null }
     } catch (err) {
+      setLoading(false)
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       return { error: { message: errorMessage } as AuthError }
-    } finally {
-      setLoading(false)
     }
   }
 
