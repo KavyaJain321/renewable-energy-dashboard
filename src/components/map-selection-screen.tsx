@@ -19,6 +19,12 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
+// TODO: Integrate with Supabase Projects
+// - Use useProject hook to save selected polygon as GeoJSON
+// - Store polygon coordinates in projects table
+// - Add project name and description input
+// - Call createProject API on confirm selection
+
 interface MapSelectionScreenProps {
   onConfirmSelection: () => void;
 }

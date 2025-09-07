@@ -4,6 +4,8 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Zap, CheckCircle } from "lucide-react";
+import { useAuth } from "../context/AuthProvider";
+import { toast } from "sonner";
 
 interface SignupScreenProps {
   onSignup: () => void;
@@ -22,17 +24,63 @@ export function SignupScreen({ onSignup, onSwitchToLogin }: SignupScreenProps) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { signup, loginWithGoogle } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match");
+      toast.error("Passwords don't match");
       return;
     }
     
-    // Simulate signup - in real app, you'd create account
-    onSignup();
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    if (!formData.name.trim()) {
+      toast.error("Please enter your full name");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await signup(formData.email, formData.password, formData.name);
+      
+      if (error) {
+        toast.error(error.message || "Signup failed. Please try again.");
+      } else {
+        toast.success("Account created successfully! Please check your email to verify your account.");
+        onSignup(); // This will redirect to area-selection
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setIsLoading(true);
+    
+    try {
+      const { error } = await loginWithGoogle();
+      
+      if (error) {
+        toast.error(error.message || "Google signup failed. Please try again.");
+      } else {
+        toast.success("Redirecting to Google...");
+        // Google OAuth will handle the redirect
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const passwordsMatch = formData.password === formData.confirmPassword && formData.confirmPassword.length > 0;
@@ -123,10 +171,10 @@ export function SignupScreen({ onSignup, onSwitchToLogin }: SignupScreenProps) {
             
             <Button 
               type="submit" 
+              disabled={isLoading || !formData.name || !formData.email || !formData.password || !passwordsMatch}
               className="w-full h-11 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
-              disabled={!formData.name || !formData.email || !formData.password || !passwordsMatch}
             >
-              Create Account
+              {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
           
@@ -141,11 +189,9 @@ export function SignupScreen({ onSignup, onSwitchToLogin }: SignupScreenProps) {
           
           <Button 
             variant="outline" 
+            disabled={isLoading}
             className="w-full h-11 border-gray-200 hover:bg-gray-50"
-            onClick={() => {
-              // Simulate Google signup
-              onSignup();
-            }}
+            onClick={handleGoogleSignup}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

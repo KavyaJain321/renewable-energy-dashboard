@@ -17,6 +17,12 @@ import {
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
+// TODO: Replace mock data with real Supabase queries
+// - Fetch constraint data from projects table
+// - Fetch energy output data from energy_potential field
+// - Fetch ROI data from financial_analysis field
+// - Use useProject hook to get current project data
+
 const constraintData = [
   { name: "Buildings", value: 15, color: "#ef4444" },
   { name: "Water Bodies", value: 12, color: "#3b82f6" },
@@ -50,12 +56,28 @@ const roiData = [
   { year: "Year 25", roi: 73, payback: 14.6 }
 ];
 
-export function DashboardMain() {
+interface DashboardMainProps {
+  onResetMapSelection?: () => void;
+}
+
+export function DashboardMain({ onResetMapSelection }: DashboardMainProps) {
   return (
     <div className="flex-1 p-6 bg-gray-50">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Land Assessment Dashboard</h1>
-        <p className="text-gray-600 mt-1">Analyze renewable energy potential for selected land parcels</p>
+      <div className="mb-6 flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Land Assessment Dashboard</h1>
+          <p className="text-gray-600 mt-1">Analyze renewable energy potential for selected land parcels</p>
+        </div>
+        {onResetMapSelection && (
+          <Button 
+            variant="outline" 
+            onClick={onResetMapSelection}
+            className="text-sm"
+          >
+            <Square className="w-4 h-4 mr-2" />
+            Reselect Area
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-12 gap-6 h-full">
