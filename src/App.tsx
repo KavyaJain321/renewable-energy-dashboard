@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SidebarProvider } from "./components/ui/sidebar";
 import { SidebarNav } from "./components/sidebar-nav";
 import { TopNav } from "./components/top-nav";
@@ -13,6 +13,7 @@ import { SettingsPage } from "./components/settings-page";
 import { LoginScreen } from "./components/login-screen";
 import { SignupScreen } from "./components/signup-screen";
 import { MapSelectionScreen } from "./components/map-selection-screen";
+import { useAuth } from "./context/AuthProvider";
 import {
   Card,
   CardContent,
@@ -57,10 +58,22 @@ function PlaceholderPage({
 }
 
 export default function App() {
+  const { user, loading } = useAuth();
   const [currentScreen, setCurrentScreen] = useState<
     "login" | "signup" | "mapSelection" | "dashboard"
   >("login");
   const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Handle authentication state changes
+  useEffect(() => {
+    if (user && !loading) {
+      // User is authenticated, redirect to map selection or dashboard
+      setCurrentScreen("mapSelection");
+    } else if (!user && !loading) {
+      // User is not authenticated, show login
+      setCurrentScreen("login");
+    }
+  }, [user, loading]);
 
   const handleLogin = () => {
     setCurrentScreen("mapSelection");
@@ -82,6 +95,18 @@ export default function App() {
   const switchToLogin = () => {
     setCurrentScreen("login");
   };
+
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Render login/signup screens
   if (currentScreen === "login") {

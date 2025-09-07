@@ -39,23 +39,18 @@ export function LoginScreen({ onLogin, onSwitchToSignup }: LoginScreenProps) {
   };
 
   const handleGoogleLogin = async () => {
-    console.log('Google login button clicked');
     setIsLoading(true);
     
     try {
-      console.log('Calling loginWithGoogle...');
       const { error } = await loginWithGoogle();
       
       if (error) {
-        console.log('Google login error:', error);
         toast.error(error.message || "Google login failed. Please try again.");
       } else {
-        console.log('Google login success');
         toast.success("Redirecting to Google...");
         // Google OAuth will handle the redirect
       }
     } catch (err) {
-      console.log('Google login exception:', err);
       toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
