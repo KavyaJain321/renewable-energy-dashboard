@@ -6,7 +6,11 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 // Check if we have real Supabase credentials
 const hasRealCredentials = supabaseUrl && supabaseAnonKey && 
   !supabaseUrl.includes('your-project-id') && 
-  !supabaseAnonKey.includes('placeholder')
+  !supabaseUrl.includes('fake-url-for-testing') &&
+  !supabaseAnonKey.includes('placeholder') &&
+  !supabaseAnonKey.includes('fake-key-for-testing') &&
+  supabaseUrl.includes('.supabase.co') &&
+  supabaseAnonKey.startsWith('eyJ')
 
 if (!hasRealCredentials) {
   console.warn('⚠️ Using mock Supabase client. Authentication will not work until you set up real Supabase credentials.')
@@ -39,9 +43,17 @@ if (hasRealCredentials) {
         error: { message: 'Authentication not available. Please set up Supabase credentials.' } 
       }),
       signOut: async () => ({ error: null }),
-      signInWithOAuth: async () => ({ 
+      signInWithOAuth: async () => {
+        // Prevent any redirects or network requests
+        console.warn('Google OAuth not available. Please set up Supabase credentials.')
+        return { 
+          data: null, 
+          error: { message: 'OAuth not available. Please set up Supabase credentials.' } 
+        }
+      },
+      signInWithOtp: async () => ({ 
         data: null, 
-        error: { message: 'OAuth not available. Please set up Supabase credentials.' } 
+        error: { message: 'OTP not available. Please set up Supabase credentials.' } 
       })
     }
   }
